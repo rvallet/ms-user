@@ -1,5 +1,6 @@
 package com.vallet.ms_user.service.impl;
 
+import com.vallet.ms_user.dto.UserDto;
 import com.vallet.ms_user.model.CommonData;
 import com.vallet.ms_user.model.Utilisateur;
 import com.vallet.ms_user.repository.UtilisateurRepository;
@@ -18,23 +19,28 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private UtilisateurRepository utilisateurRepository;
 
     @Override
-    public Utilisateur createUser(Utilisateur utilisateur) {
+    public Utilisateur createUser(UserDto utilisateur) {
         CommonData commonData = new CommonData();
         commonData.setCreatedAt(LocalDateTime.now());
         commonData.setCreatedBy("system");
         commonData.setUpdatedAt(LocalDateTime.now());
         commonData.setUpdatedBy("system");
-        utilisateur.setCommonData(commonData);
+
+        Utilisateur newUser = new Utilisateur();
+        newUser.setLogin(utilisateur.getLogin());
+        newUser.setNom(utilisateur.getNom());
+        newUser.setPrenom(utilisateur.getPrenom());
+        newUser.setAdresses(utilisateur.getAdresses());
+        newUser.setCommonData(commonData);
         // Hash the password before saving
-        utilisateur.setMotDePasse(null);
-        return utilisateurRepository.save(utilisateur);
+        newUser.setMotDePasse(null);
+        return utilisateurRepository.save(newUser);
     }
 
     @Override
-    public Utilisateur updateUser(Utilisateur utilisateur) {
-        Utilisateur existingUser = utilisateurRepository.findById(utilisateur.getId())
+    public Utilisateur updateUser(UserDto utilisateur) {
+        Utilisateur existingUser = utilisateurRepository.findByLogin(utilisateur.getLogin())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        existingUser.setLogin(utilisateur.getLogin());
         existingUser.setNom(utilisateur.getNom());
         existingUser.setPrenom(utilisateur.getPrenom());
         existingUser.setAdresses(utilisateur.getAdresses());
@@ -56,8 +62,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public Utilisateur getUserByLogin(String login) {
-        return null;
+    public Optional<Utilisateur> getUserByLogin(String login) {
+        return utilisateurRepository.findByLogin(login);
     }
 
     @Override

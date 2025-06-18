@@ -46,6 +46,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
             </dependency>
+			<!-- Hibernate Validator: Bean Validation (Jakarta Validation) used for validating user input and API requests. -->
+			<dependency>
+				<groupId>org.hibernate.validator</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>8.0.2.Final</version>
+			</dependency>
 			<!-- Swagger UI - permet d'afficher la documentation de l'API -->
 			<dependency>
 				<groupId>org.springdoc</groupId>

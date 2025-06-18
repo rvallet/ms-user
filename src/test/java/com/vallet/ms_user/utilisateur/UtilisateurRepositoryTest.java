@@ -33,7 +33,7 @@ public class UtilisateurRepositoryTest {
         adresse.setCodePostal("12345");
         adresse.setPays("Testland");
         adresse.setNumero("1");
-        adresse.setIsPrincipale(true);
+        adresse.setPrincipale(true);
 
 
         Utilisateur user = new Utilisateur();

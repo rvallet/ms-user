@@ -16,9 +16,15 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui/index.html"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                                "/swagger-ui/index.html",
+                                "/ms-user/create",
+                                "/ms-user/update",
+                                "/ms-user/id/**",
+                                "/ms-user/login/**"
+                        )
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable);
 

@@ -7,7 +7,7 @@ public class Adresse {
     private String codePostal;
     private String ville;
     private String pays;
-    private boolean isPrincipale;
+    private boolean principale;
 
     public Adresse() {
     }
@@ -60,11 +60,12 @@ public class Adresse {
         this.pays = pays;
     }
 
-    public boolean isPrincipale() {
-        return isPrincipale;
+    public boolean getPrincipale() {
+        return principale;
     }
 
-    public void setIsPrincipale(boolean isPrincipale) {
-        this.isPrincipale = isPrincipale;
+    public void setPrincipale(boolean isPrincipale) {
+        this.principale = isPrincipale;
     }
+
 }
