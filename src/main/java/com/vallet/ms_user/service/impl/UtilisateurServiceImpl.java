@@ -76,6 +76,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         commonData.setUpdatedAt(LocalDateTime.now());
         commonData.setUpdatedBy(CreatorType.SYSTEM);
         existingUser.setCommonData(commonData);
+
         // Hash the password with the existing password service
         if (StringUtils.hasLength(utilisateur.getMotDePasse()) && !passwordService.matches(utilisateur.getMotDePasse(), existingUser.getMotDePasse())) {
             existingUser.setMotDePasse(passwordService.hashPassword(utilisateur.getMotDePasse()));
@@ -120,7 +121,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
      * @return a list of Utilisateur entities matching the provided IDs
      */
     @Override
-    public List<Utilisateur> getUserByIdList(List<String> ids) {
+    public List<Utilisateur> getUsersByIdList(List<String> ids) {
         return utilisateurRepository.findAllByIdIn(ids);
     }
 
