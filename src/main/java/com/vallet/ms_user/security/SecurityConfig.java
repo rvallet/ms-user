@@ -23,6 +23,7 @@ public class SecurityConfig {
                                 "/ms-user/update",
                                 "/ms-user/id/**",
                                 "/ms-user/login/**"
+
                         )
                         .permitAll()
                         .anyRequest()

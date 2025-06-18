@@ -13,7 +13,7 @@ public interface UtilisateurService {
     Optional<Utilisateur> getUserById(String id);
     Optional<Utilisateur> getUserByLogin(String login);
     List<Utilisateur> getUsersByLoginList(List<String> logins);
-    List<Utilisateur> getUserByIdList(List<String> ids);
+    List<Utilisateur> getUsersByIdList(List<String> ids);
     void deleteUserById(String id);
     void deleteUserByLogin(String login);
     Optional<Utilisateur> userAuthenticate(String login, String motDePasse);

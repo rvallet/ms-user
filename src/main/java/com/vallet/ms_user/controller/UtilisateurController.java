@@ -7,7 +7,9 @@ import com.vallet.ms_user.model.Utilisateur;
 import com.vallet.ms_user.service.impl.UtilisateurServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(ApiRegistration.REST_PREFIX)
 public class UtilisateurController {
@@ -23,16 +27,16 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurServiceImpl utilisateurService;
 
-    @PostMapping("/create")
+    @PostMapping(ApiRegistration.CREATE)
     public ResponseEntity<Utilisateur> createUser(@RequestBody @Valid UserDto utilisateur) {
-        Utilisateur created = utilisateurService.createUser(utilisateur);
-        return ResponseEntity.ok(created);
+        Utilisateur created = utilisateurService.upsertUser(utilisateur);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PutMapping("/update")
+    @PutMapping(ApiRegistration.UPDATE)
     public ResponseEntity<Utilisateur> updateUser(@RequestBody @Valid UserDto utilisateur) {
         Utilisateur updated = utilisateurService.upsertUser(utilisateur);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
     }
 
     @GetMapping(ApiRegistration.ID + "/{id}")
@@ -62,6 +66,44 @@ public class UtilisateurController {
                         )
                     )
                 .orElse(ResponseEntity.status(401).build());
+    }
+
+    @GetMapping(ApiRegistration.LOGIN + "/list")
+    public List<UserDto> getUsersByLoginList(@RequestBody List<String> logins) {
+        List<Utilisateur> utilisateurs = utilisateurService.getUsersByLoginList(logins);
+        return utilisateurs.stream()
+                .map(user -> new UserDto(
+                        user.getLogin(),
+                        null,
+                        user.getNom(),
+                        user.getPrenom(),
+                        user.getAdresses()))
+                .toList();
+    }
+
+    @GetMapping(ApiRegistration.ID + "/list")
+    public List<UserDto> getUsersByIdList(@RequestBody List<String> ids) {
+        List<Utilisateur> utilisateurs = utilisateurService.getUsersByIdList(ids);
+        return utilisateurs.stream()
+                .map(user -> new UserDto(
+                        user.getLogin(),
+                        null,
+                        user.getNom(),
+                        user.getPrenom(),
+                        user.getAdresses()))
+                .toList();
+    }
+
+    @DeleteMapping(ApiRegistration.ID + "/{id}")
+    public ResponseEntity<Void> deleteUtilisateur(@PathVariable String id) {
+        utilisateurService.deleteUserById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(ApiRegistration.LOGIN + "/{login}")
+    public ResponseEntity<Void> deleteUtilisateurByLogin(@PathVariable String login) {
+        utilisateurService.deleteUserByLogin(login);
+        return ResponseEntity.noContent().build();
     }
 
 }
