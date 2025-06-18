@@ -1,6 +1,7 @@
 package com.vallet.ms_user.controller;
 
 import com.vallet.ms_user.ApiRegistration;
+import com.vallet.ms_user.dto.LoginRequest;
 import com.vallet.ms_user.dto.UserDto;
 import com.vallet.ms_user.model.Utilisateur;
 import com.vallet.ms_user.service.impl.UtilisateurServiceImpl;
@@ -30,7 +31,7 @@ public class UtilisateurController {
 
     @PutMapping("/update")
     public ResponseEntity<Utilisateur> updateUser(@RequestBody @Valid UserDto utilisateur) {
-        Utilisateur updated = utilisateurService.updateUser(utilisateur);
+        Utilisateur updated = utilisateurService.upsertUser(utilisateur);
         return ResponseEntity.ok(updated);
     }
 
@@ -46,6 +47,21 @@ public class UtilisateurController {
         return utilisateurService.getUserByLogin(login)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(ApiRegistration.LOGIN)
+    public ResponseEntity<UserDto> login(@RequestBody @Valid LoginRequest loginRequest) {
+        return utilisateurService.userAuthenticate(loginRequest.getLogin(), loginRequest.getMotDePasse())
+                .map(user -> ResponseEntity.ok(
+                        new UserDto(
+                        user.getLogin(),
+                        null,
+                        user.getNom(),
+                        user.getPrenom(),
+                        user.getAdresses())
+                        )
+                    )
+                .orElse(ResponseEntity.status(401).build());
     }
 
 }
