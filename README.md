@@ -14,17 +14,19 @@ création, mise à jour, suppression de comptes, recupération des informations,
 ## Fonctionnalités
 
 ## Technologies utilisées
-- Java 21
+- Java 24
 - Spring Boot 3.4.4
 - Maven 3.14.0
 
 ## Prérequis
-- Java JRE ou JDK 21 installé sur votre machine.
+- Java JRE ou JDK 24 installé sur votre machine.
 - MongoDB 6.0 ou supérieur pour la gestion de la base de données.
 
 ## Installation
 
 ## Utilisation
+- Voir la documentation Swagger pour exécutez les requêtes GET, POST, PUT et DELETE :
+  - http://localhost:9095/swagger-ui/index.html
 
 ## License
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.

@@ -1,5 +1,6 @@
 package com.vallet.ms_user.controller;
 
+import com.vallet.ms_user.ApiRegistration;
 import com.vallet.ms_user.model.Utilisateur;
 import com.vallet.ms_user.service.UtilisateurService;
 import com.vallet.ms_user.service.impl.UtilisateurServiceImpl;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/utilisateurs")
+@RequestMapping(ApiRegistration.REST_PREFIX)
 public class UtilisateurController {
 
     @Autowired
@@ -31,7 +32,7 @@ public class UtilisateurController {
         return ResponseEntity.ok(updated);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ApiRegistration.ID + "/{id}")
     public ResponseEntity<Utilisateur> getUtilisateur(@PathVariable String id) {
         return utilisateurService.getUserById(id)
                 .map(ResponseEntity::ok)
