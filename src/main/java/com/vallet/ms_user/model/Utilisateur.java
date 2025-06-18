@@ -1,17 +1,26 @@
 package com.vallet.ms_user.model;
 
+import com.vallet.ms_user.exception.NotFoundException;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "utilisateurs")
+@Document(collection = "Utilisateurs")
 public class Utilisateur {
 
     @Id
     private String id;
 
+    /**
+     * Login utilisateur
+     * Il doit être unique en BDD, il faut donc créer un index unique sur ce champ.
+     * Dans MongoDB : db.Utilisateurs.createIndex({ login: 1 }, { unique: true })
+     */
+    @Indexed(unique = true)
     private String login;
+
     private String motDePasse;
     private String nom;
     private String prenom;
@@ -76,4 +85,15 @@ public class Utilisateur {
     public void setCommonData(CommonData commonData) {
         this.commonData = commonData;
     }
+
+    public Adresse getAdressePrincipale() {
+        if (adresses != null && !adresses.isEmpty()) {
+            return adresses.stream()
+                    .filter(Adresse::getPrincipale)
+                    .findFirst()
+                    .orElseThrow(() -> new NotFoundException("Pas d'adresse principale trouvée pour l'utilisateur : " + getLogin()));
+        }
+        return null;
+    }
+
 }

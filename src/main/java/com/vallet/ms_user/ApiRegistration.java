@@ -4,7 +4,7 @@ public interface ApiRegistration {
 
     String SERVICE_ID = "MS-USER";
     String REST_PREFIX = "/ms-user/";
-    String ID = "id/";
-    String LOGIN = "login/";
+    String ID = "id";
+    String LOGIN = "login";
 
 }
