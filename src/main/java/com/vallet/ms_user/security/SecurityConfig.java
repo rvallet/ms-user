@@ -40,8 +40,8 @@ public class SecurityConfig {
                                 "/ms-user/create",
                                 "/ms-user/update",
                                 "/ms-user/id/**",
-                                "/ms-user/login/**"
-
+                                "/ms-user/login/**",
+                                "/ms-user/change-password"
                         )
                         .permitAll()
                         .anyRequest()

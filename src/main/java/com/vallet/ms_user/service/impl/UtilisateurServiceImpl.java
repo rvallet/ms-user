@@ -2,11 +2,14 @@ package com.vallet.ms_user.service.impl;
 
 import com.vallet.ms_user.dto.UserDto;
 import com.vallet.ms_user.enums.CreatorType;
+import com.vallet.ms_user.exception.ExceptionCause;
 import com.vallet.ms_user.model.CommonData;
 import com.vallet.ms_user.model.Utilisateur;
 import com.vallet.ms_user.repository.UtilisateurRepository;
 import com.vallet.ms_user.service.UtilisateurService;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,6 +25,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Autowired
     private PasswordServiceImpl passwordService;
+
+    /**
+     * Default password regex pattern for validating user passwords.
+     * This pattern requires at least one lowercase letter, one uppercase letter,
+     * one digit, one special character, and a minimum length of 8 characters.
+     */
+    public static final String DEFAULT_PASSWORD_REGEX =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
 
     /**
      * Creates a new user based on the provided UserDto.
@@ -160,6 +171,32 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void changePassword(String login, String newPassword, @Nullable String passwordRegex){
+        if (passwordRegex == null) {
+            passwordRegex = DEFAULT_PASSWORD_REGEX;
+        }
+        if (!passwordService.isPasswordValid(newPassword, passwordRegex)) {
+            throw new IllegalArgumentException(ExceptionCause.PASSWORD_INVALID.getMessage());
+        }
+        Optional<Utilisateur> userOpt = utilisateurRepository.findByLogin(login);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException(ExceptionCause.USER_NOT_FOUND.getMessage());
+        }
+
+            Utilisateur user = userOpt.get();
+            user.setMotDePasse(passwordService.hashPassword(newPassword));
+            CommonData commonData = user.getCommonData();
+            if (commonData == null) {
+                commonData = new CommonData();
+            }
+            commonData.setUpdatedAt(LocalDateTime.now());
+            commonData.setUpdatedBy(CreatorType.SYSTEM);
+            user.setCommonData(commonData);
+            utilisateurRepository.save(user);
+
     }
 
 }

@@ -8,5 +8,7 @@ public interface ApiRegistration {
     String UPDATE = "update";
     String ID = "id";
     String LOGIN = "login";
+    String AUTHENTICATE = "authenticate";
+    String CHANGE_PASSWORD = "change-password";
 
 }
