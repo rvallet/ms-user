@@ -2,6 +2,7 @@ package com.vallet.ms_user.controller;
 
 import com.vallet.ms_user.ApiRegistration;
 import com.vallet.ms_user.TestUtils;
+import com.vallet.ms_user.dto.ChangePasswordRequest;
 import com.vallet.ms_user.dto.UserDto;
 import com.vallet.ms_user.model.Utilisateur;
 import org.junit.jupiter.api.AfterEach;
@@ -198,6 +199,110 @@ public class UtilisateurControllerTest {
                 "La date de mise à jour de l'utilisateur mis à jour doit être postérieure à celle de l'utilisateur existant");
         assertTrue(responseUser.getCommonData().getCreatedAt().isEqual(existingUser.getCommonData().getCreatedAt()),
                 "La date de création de l'utilisateur mis à jour doit être égale à celle de l'utilisateur existant");
+
+    }
+
+    @Test
+    public void changePasswordWithRegexTest() throws Exception {
+        // Récupération d'un utilisateur existant
+        Utilisateur existingUser = mongoOps.findOne(
+                new org.springframework.data.mongodb.core.query.Query(),
+                Utilisateur.class);
+        assertNotNull(existingUser, "L'utilisateur existant ne doit pas être null");
+
+        // Mise à jour du mot de passe de l'utilisateur
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setLogin(existingUser.getLogin());
+        changePasswordRequest.setNewPassword("NewPassword123");
+        changePasswordRequest.setPasswordRegex("^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"); // regex une lettre et un chiffre, mais pas de caractère spécial sur 8 caractères minimum
+
+        // Envoi de la requête PUT pour mettre à jour le mot de passe
+        // @formatter:off
+        mockMvc.perform(
+                        put(ApiRegistration.REST_PREFIX + ApiRegistration.CHANGE_PASSWORD)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUtils.convertObjectToJson(changePasswordRequest))
+                )
+                .andExpect(status().isNoContent());
+        // @formatter:on
+
+    }
+
+    @Test
+    public void changePasswordWithoutRegexTest() throws Exception {
+        // Récupération d'un utilisateur existant
+        Utilisateur existingUser = mongoOps.findOne(
+                new org.springframework.data.mongodb.core.query.Query(),
+                Utilisateur.class);
+        assertNotNull(existingUser, "L'utilisateur existant ne doit pas être null");
+
+        // Mise à jour du mot de passe de l'utilisateur sans regex (par défaut : min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial)
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setLogin(existingUser.getLogin());
+        changePasswordRequest.setNewPassword("NewPassword@123");
+        changePasswordRequest.setPasswordRegex(null); // Pas de regex, la regex par défaut sera utilisée
+
+        // Envoi de la requête PUT pour mettre à jour le mot de passe
+        // @formatter:off
+        mockMvc.perform(
+                        put(ApiRegistration.REST_PREFIX + ApiRegistration.CHANGE_PASSWORD)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUtils.convertObjectToJson(changePasswordRequest))
+                )
+                .andExpect(status().isNoContent());
+        // @formatter:on
+
+    }
+
+    @Test
+    public void changePasswordWithRegexAndInvalidPasswordTest() throws Exception {
+        // Récupération d'un utilisateur existant
+        Utilisateur existingUser = mongoOps.findOne(
+                new org.springframework.data.mongodb.core.query.Query(),
+                Utilisateur.class);
+        assertNotNull(existingUser, "L'utilisateur existant ne doit pas être null");
+
+        // Mise à jour du mot de passe de l'utilisateur avec une regex invalide
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setLogin(existingUser.getLogin());
+        changePasswordRequest.setNewPassword("newpassword"); // Mot de passe invalide
+        changePasswordRequest.setPasswordRegex("^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"); // Regex une lettre et un chiffre, mais pas de caractère spécial sur 8 caractères
+
+        // Envoi de la requête PUT pour mettre à jour le mot de passe
+        // @formatter:off
+        mockMvc.perform(
+                        put(ApiRegistration.REST_PREFIX + ApiRegistration.CHANGE_PASSWORD)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUtils.convertObjectToJson(changePasswordRequest))
+                )
+                .andExpect(status().isBadRequest());
+        // @formatter:on
+
+    }
+
+    @Test
+    public void changePasswordWithoutRegexAndInvalidPasswordTest() throws Exception {
+        // Récupération d'un utilisateur existant
+        Utilisateur existingUser = mongoOps.findOne(
+                new org.springframework.data.mongodb.core.query.Query(),
+                Utilisateur.class);
+        assertNotNull(existingUser, "L'utilisateur existant ne doit pas être null");
+
+        // Mise à jour du mot de passe de l'utilisateur sans regex (par défaut : min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial)
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setLogin(existingUser.getLogin());
+        changePasswordRequest.setNewPassword("newpassword"); // Mot de passe invalide
+        changePasswordRequest.setPasswordRegex(null); // Pas de regex, la regex par défaut sera utilisée
+
+        // Envoi de la requête PUT pour mettre à jour le mot de passe
+        // @formatter:off
+        mockMvc.perform(
+                        put(ApiRegistration.REST_PREFIX + ApiRegistration.CHANGE_PASSWORD)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUtils.convertObjectToJson(changePasswordRequest))
+                )
+                .andExpect(status().isBadRequest());
+        // @formatter:on
 
     }
 

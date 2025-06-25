@@ -1,6 +1,7 @@
 package com.vallet.ms_user.dto;
 
 import com.vallet.ms_user.model.Adresse;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,10 +11,22 @@ public class UserDto {
 
     @NotNull
     @NotBlank
+    @Schema(description = "email de l'utilisateur",
+            example = "johndoe@email.com",
+            requiredMode = Schema.RequiredMode.REQUIRED)
     private String login;
+
+    @Schema(description = "Mot de passe respectant les règles définies par l'expression régulière",
+            example = "newSecurePassword@123",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String motDePasse;
+
     private String nom;
     private String prenom;
+
+    @Schema(description = "Liste des adresses associées à l'utilisateur",
+            example = "[{numero: '123', rue: 'Main St', codePostal: '12345', ville: 'Paris', pays: 'France', principale: true}, {numero: '456', rue: 'Second St', codePostal: '67890', ville: 'Lyon', pays: 'France', principale: false}]",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private List<Adresse> adresses;
 
     public UserDto() {

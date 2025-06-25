@@ -1,6 +1,7 @@
 package com.vallet.ms_user.controller;
 
 import com.vallet.ms_user.ApiRegistration;
+import com.vallet.ms_user.dto.ChangePasswordRequest;
 import com.vallet.ms_user.dto.LoginRequest;
 import com.vallet.ms_user.dto.UserDto;
 import com.vallet.ms_user.model.Utilisateur;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.vallet.ms_user.exception.ExceptionCause.getStatusFromMessage;
 
 @RestController
 @RequestMapping(ApiRegistration.REST_PREFIX)
@@ -104,6 +107,17 @@ public class UtilisateurController {
     public ResponseEntity<Void> deleteUtilisateurByLogin(@PathVariable String login) {
         utilisateurService.deleteUserByLogin(login);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(ApiRegistration.CHANGE_PASSWORD)
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            utilisateurService.changePassword(request.getLogin(), request.getNewPassword(), request.getPasswordRegex());
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            HttpStatus status = getStatusFromMessage(e.getMessage());
+            return ResponseEntity.status(status).body(e.getMessage());
+        }
     }
 
 }

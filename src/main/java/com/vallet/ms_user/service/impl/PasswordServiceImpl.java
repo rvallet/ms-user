@@ -35,4 +35,17 @@ public class PasswordServiceImpl implements PasswordService {
     public boolean matches(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
+
+    /**
+     * Validates the password against a regex pattern.
+     *
+     * @param password      the password to validate
+     * @param regexPattern  the regex pattern to validate against
+     * @return true if the password matches the pattern, false otherwise
+     */
+    @Override
+    public boolean isPasswordValid(String password, String regexPattern) {
+        return password != null && password.matches(regexPattern);
+    }
+
 }

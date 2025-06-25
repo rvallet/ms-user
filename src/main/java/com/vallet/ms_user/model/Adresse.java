@@ -1,5 +1,7 @@
 package com.vallet.ms_user.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class Adresse {
 
     private String numero;
@@ -7,6 +9,9 @@ public class Adresse {
     private String codePostal;
     private String ville;
     private String pays;
+    @Schema(description = "Indique si l'adresse est principale",
+            example = "true",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private boolean principale;
 
     public Adresse() {

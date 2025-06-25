@@ -17,5 +17,6 @@ public interface UtilisateurService {
     void deleteUserById(String id);
     void deleteUserByLogin(String login);
     Optional<Utilisateur> userAuthenticate(String login, String motDePasse);
+    void changePassword(String login, String newPassword, String passwordRegex);
 
 }
